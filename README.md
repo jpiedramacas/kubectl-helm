@@ -7,7 +7,6 @@
 
 En esta guía, te mostraré cómo desplegar Prometheus y Grafana en tu clúster de Minikube utilizando sus gráficos Helm proporcionados. Prometheus nos ayudará a monitorear nuestro clúster de Kubernetes y otros recursos que se ejecutan en él. Grafana nos permitirá visualizar las métricas registradas por Prometheus y mostrarlas en paneles atractivos.
 
-**Última actualización del artículo:** 2023-09-20, gracias a Dennis Eller por su contribución.
 
 ## Requisitos
 
