@@ -45,6 +45,8 @@ minikube service prometheus-server-np
 
 Esto abrirá una ventana del navegador con la interfaz web de Prometheus.
 
+
+
 ## Paso 2: Instalar Grafana
 
 Al igual que con Prometheus, los gráficos oficiales de Helm del canal estable para Grafana han sido desaprobados. Los gráficos recomendados son los alojados por el repositorio de Gráficos Helm de la Comunidad de Grafana.
@@ -67,14 +69,23 @@ De nuevo, dado que estamos utilizando Minikube, para acceder fácilmente a la in
 Nota: Grafana está protegida por contraseña de forma predeterminada. Para recuperar la contraseña del usuario administrador, podemos ejecutar el siguiente comando:
 
 ```bash
-kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+PASSWORD=$(kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo)
 ```
+El comando de arriba te muestra en pantalla la contraseña
+
+```bash
+echo "Usuario: admin"
+echo "Contraseña: $PASSWORD"
+```
+
+Este comando decodificará y mostrará la contraseña del usuario administrador de Grafana.
 
 Ahora podemos cargar la interfaz web de Grafana utilizando el usuario admin y la contraseña recuperada:
 
 ```bash
 minikube service grafana-np
 ```
+
 
 ## Paso 3: Configurar la Fuente de Datos de Prometheus en Grafana
 
