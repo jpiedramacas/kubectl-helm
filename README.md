@@ -67,14 +67,12 @@ Nota: Grafana está protegida por contraseña de forma predeterminada. Para recu
 ```bash
 PASSWORD=$(kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo)
 ```
-El comando de arriba te muestra en pantalla la contraseña
+El comando de arriba decodificará y mostrará la contraseña del usuario administrador de Grafana.
 
 ```bash
 echo "Usuario: admin"
 echo "Contraseña: $PASSWORD"
 ```
-
-Este comando decodificará y mostrará la contraseña del usuario administrador de Grafana.
 
 Ahora podemos cargar la interfaz web de Grafana utilizando el usuario admin y la contraseña recuperada:
 
