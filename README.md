@@ -86,9 +86,35 @@ Necesitamos dirigirnos a **Configuraciones > Fuentes de Datos** y agregar una nu
 
 La URL para nuestra instancia de Prometheus es el nombre del servicio http://prometheus-server:80.
 
+
 ## Paso 4: Configurar un Dashboard de Kubernetes
 
-Para este artículo del blog, usaré el [siguiente dashboard de Grafana](https://grafana.com/grafana/dashboards/6417), pero puedes usar cualquier otro Dashboard. Incluso puedes crear el tuyo propio fácilmente, pero eso se cubrirá en otro artículo.
+Para este artículo del blog, usaré los siguientes dashboards de Grafana. Cada uno tiene una función específica que te permite monitorear diferentes aspectos de tu clúster de Kubernetes:
+
+- **15661 - Kubernetes Cluster Overview (via Prometheus Operator)**  
+  Este dashboard proporciona una visión general del clúster de Kubernetes utilizando el Operador de Prometheus. Te permite monitorear los recursos del clúster, como el uso de CPU, memoria, redes y almacenamiento.
+
+  [Ir al dashboard 15661](https://grafana.com/grafana/dashboards/15661)
+
+- **12006 - Kubernetes Cluster (via Prometheus)**  
+  Este dashboard proporciona una visión general del estado y la salud de tu clúster de Kubernetes, incluidas las métricas de nodos, pods, contenedores y servicios.
+
+  [Ir al dashboard 12006](https://grafana.com/grafana/dashboards/12006)
+
+- **6417 - Kubernetes Cluster (Prometheus)**  
+  Este dashboard te permite monitorear y analizar métricas específicas de Kubernetes, como el uso de CPU, memoria y red, así como la utilización de los recursos de los nodos y los pods.
+
+  [Ir al dashboard 6417](https://grafana.com/grafana/dashboards/6417)
+
+- **8171 - Kubernetes Cluster Monitoring (via Prometheus Operator)**  
+  Este dashboard proporciona una visión general del estado del clúster de Kubernetes, incluyendo la carga del nodo, el uso de CPU, memoria y red, y la utilización del almacenamiento.
+
+  [Ir al dashboard 8171](https://grafana.com/grafana/dashboards/8171)
+
+Puedes seleccionar el que mejor se ajuste a tus necesidades y preferencias.
+
+--- 
+
 
 Nos dirigimos a **Crear (+) > Importar** para Importar a través de grafana.com y configuramos 6417 en el campo de id y hacemos clic en Cargar.
 
