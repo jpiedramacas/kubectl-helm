@@ -1,96 +1,102 @@
+Aquí tienes una versión mejorada y más detallada del README para configurar Prometheus y Grafana en Minikube:
 
 ---
 
-# Instalación de Jenkins en Minikube usando Helm
+# Configuración de Prometheus y Grafana en Minikube
 
-## Paso 1: Instalar Helm
+## Introducción
 
-Para instalar Helm en Windows, vamos a utilizar Chocolatey, un gestor de paquetes para Windows. Sigue estos pasos:
+En esta guía, te mostraré cómo desplegar Prometheus y Grafana en tu clúster de Minikube utilizando sus gráficos Helm proporcionados. Prometheus nos ayudará a monitorear nuestro clúster de Kubernetes y otros recursos que se ejecutan en él. Grafana nos permitirá visualizar las métricas registradas por Prometheus y mostrarlas en paneles atractivos.
 
-### 1. Instalar Chocolatey
+**Última actualización del artículo:** 2023-09-20, gracias a Dennis Eller por su contribución.
 
-Abre PowerShell como administrador y ejecuta el siguiente comando para instalar Chocolatey:
+## Requisitos
 
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-```
+- Minikube
+- Helm
 
-### 2. Instalar Helm con Chocolatey
+## Paso 1: Instalar Prometheus
 
-Una vez que Chocolatey esté instalado, ejecuta el siguiente comando para instalar Helm:
+Los gráficos de canal estable de Prometheus han sido desaprobados a favor de los Gráficos Helm de la Comunidad de Prometheus.
 
-```powershell
-choco install kubernetes-helm
-```
-
-### 3. Verificar la instalación de Helm
-
-Para verificar que Helm se ha instalado correctamente, ejecuta el siguiente comando:
-
-```powershell
-helm version
-```
-
-## Paso 2: Añadir el repositorio de Jenkins Helm
-
-Para que Helm pueda descargar los archivos de configuración de Jenkins, necesitamos agregar el repositorio de Jenkins Helm. Ejecuta los siguientes comandos:
+Comenzaremos añadiendo el repositorio a nuestra configuración de Helm:
 
 ```bash
-helm repo add jenkins https://charts.jenkins.io
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
 
-- `helm repo add jenkins https://charts.jenkins.io`: Agrega el repositorio de Jenkins Helm con el nombre `jenkins`.
-- `helm repo update`: Actualiza la lista de repositorios de Helm para asegurarnos de que tengamos la última versión del repositorio de Jenkins.
-
-## Paso 3: Instalar Jenkins
-
-Ahora que hemos agregado el repositorio de Jenkins, podemos instalar Jenkins en nuestro clúster de Kubernetes. Ejecuta el siguiente comando:
+Una vez que el repositorio esté listo, podemos instalar los gráficos proporcionados ejecutando los siguientes comandos:
 
 ```bash
-helm install jenkins jenkins/jenkins
+helm install prometheus prometheus-community/prometheus
+kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-np
 ```
 
-Este comando instala Jenkins en el clúster de Kubernetes con el nombre de lanzamiento `jenkins`.
-
-## Paso 4: Exponer el Servicio de Jenkins
-
-Para acceder a Jenkins desde un navegador web, necesitamos exponer el servicio de Jenkins. Ejecuta el siguiente comando:
+El primer comando instala los gráficos. Tomará un tiempo hasta que todo esté desplegado. Podemos verificar el estado ejecutando:
 
 ```bash
-kubectl expose service jenkins --type=NodePort --target-port=8080 --name=jenkins-np
+kubectl get pods -l app.kubernetes.io/instance=prometheus
 ```
 
-Este comando crea un servicio de tipo NodePort para Jenkins, lo que significa que será accesible desde fuera del clúster de Kubernetes a través de un puerto específico.
-
-## Paso 5: Obtener la URL de Jenkins
-
-Para obtener la URL de Jenkins y poder acceder a la interfaz gráfica de usuario, ejecuta el siguiente comando:
+Dado que estamos utilizando Minikube, el segundo comando expone el servicio `prometheus-server` utilizando un `NodePort`. De esta manera, ahora podemos acceder fácilmente a la interfaz web de Prometheus cuando el Pod esté listo:
 
 ```bash
-minikube service jenkins-np
+minikube service prometheus-server-np
 ```
 
-Este comando abrirá Jenkins en tu navegador web predeterminado.
+Esto abrirá una ventana del navegador con la interfaz web de Prometheus.
 
-## Paso 6: Obtener la Contraseña de Administrador de Jenkins
+## Paso 2: Instalar Grafana
 
-La contraseña de administrador de Jenkins se almacena como un secreto en Kubernetes. Para obtener la contraseña, ejecuta el siguiente comando:
+Al igual que con Prometheus, los gráficos oficiales de Helm del canal estable para Grafana han sido desaprobados. Los gráficos recomendados son los alojados por el repositorio de Gráficos Helm de la Comunidad de Grafana.
+
+Como antes, comenzaremos añadiendo el repositorio a nuestra configuración de Helm:
 
 ```bash
-kubectl get secret --namespace default jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode && echo
+helm repo add grafana https://grafana.github.io/helm-charts
 ```
 
-Este comando decodificará y mostrará la contraseña de administrador de Jenkins.
+A continuación, instalamos Grafana utilizando los gráficos proporcionados:
 
-## Paso 7: Iniciar Sesión en Jenkins
+```bash
+helm install grafana grafana/grafana
+kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-np
+```
 
-1. Abre la URL de Jenkins que obtuviste con el comando `minikube service jenkins-np`.
-2. Usa `admin` como nombre de usuario.
-3. Ingresa la contraseña que recuperaste en el paso anterior.
+De nuevo, dado que estamos utilizando Minikube, para acceder fácilmente a la interfaz web de Grafana, exponemos el servicio como un `NodePort`.
 
-Siguiendo estos pasos, deberías poder instalar y acceder a Jenkins en tu clúster de Minikube.
+Nota: Grafana está protegida por contraseña de forma predeterminada. Para recuperar la contraseña del usuario administrador, podemos ejecutar el siguiente comando:
 
---- 
+```bash
+kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
 
-Este README proporciona una guía detallada y completa para instalar Jenkins en Minikube, incluyendo la instalación de Helm y explicaciones detalladas de cada paso. Si necesitas más ayuda, no dudes en preguntar.
+Ahora podemos cargar la interfaz web de Grafana utilizando el usuario admin y la contraseña recuperada:
+
+```bash
+minikube service grafana-np
+```
+
+## Paso 3: Configurar la Fuente de Datos de Prometheus en Grafana
+
+Una vez que hayamos iniciado sesión en la interfaz de administración, es hora de configurar la Fuente de Datos de Prometheus.
+
+Necesitamos dirigirnos a **Configuraciones > Fuentes de Datos** y agregar una nueva instancia de Prometheus.
+
+La URL para nuestra instancia de Prometheus es el nombre del servicio http://prometheus-server:80.
+
+## Paso 4: Configurar un Dashboard de Kubernetes
+
+Para este artículo del blog, usaré el [siguiente dashboard de Grafana](https://grafana.com/grafana/dashboards/6417), pero puedes usar cualquier otro Dashboard. Incluso puedes crear el tuyo propio fácilmente, pero eso se cubrirá en otro artículo.
+
+Nos dirigimos a **Crear (+) > Importar** para Importar a través de grafana.com y configuramos 6417 en el campo de id y hacemos clic en Cargar.
+
+En la configuración del dashboard, necesitamos seleccionar la Fuente de Datos de Prometheus que creamos en el paso anterior.
+
+Una vez que confirmemos el diálogo de Importar, seremos redirigidos al nuevo Dashboard.
+
+## Kubernetes Cluster (Prometheus)
+
+Si todo salió bien, podrás ver la información de tu clúster en el Dashboard.
+
