@@ -1,4 +1,3 @@
-Aquí tienes una versión mejorada y más detallada del README para configurar Prometheus y Grafana en Minikube:
 
 ---
 
