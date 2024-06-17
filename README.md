@@ -1,5 +1,3 @@
-
----
 ## Helm
   - Instlación de la página oficial [Helm](https://helm.sh/es/docs/intro/install/)
   - Comandos de [Helm](https://helm.sh/es/docs/intro/cheatsheet/)
