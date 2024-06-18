@@ -34,7 +34,7 @@ Este README proporciona una guía detallada para configurar y utilizar un entorn
 4. **nginx.dockerfile**: Archivo Dockerfile para construir una imagen personalizada de Nginx (opcional).
 
 5. **php/**:
-   - **www.conf**: Archivo de configuración de PHP-FPM para la gestión de pools de PHP.
+   - **www. conf**: Archivo de configuración de PHP-FPM para la gestión de pools de PHP.
 
 6. **php.dockerfile**: Archivo Dockerfile para construir una imagen personalizada de PHP (opcional).
 
