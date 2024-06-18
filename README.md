@@ -1,6 +1,3 @@
-Para crear un README profesional que cumpla con tus requerimientos, aquí tienes el contenido detallado paso a paso:
-
----
 
 # Despliegue de Aplicación con Helm en Kubernetes
 
